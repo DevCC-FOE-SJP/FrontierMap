@@ -1,0 +1,146 @@
+.problem-card-workspace {
+  padding: 60px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.workspace-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 8px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.accent-line {
+  width: 40px;
+  height: 3px;
+  background: var(--primary-color);
+}
+
+.workspace-title {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.search-filter {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  width: 300px;
+}
+
+.filter-input {
+  background: none;
+  border: none;
+  color: var(--text-main);
+  font-size: 13px;
+  width: 100%;
+}
+
+.filter-input:focus {
+  outline: none;
+}
+
+.active-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.stats-label {
+  font-size: 9px;
+  font-weight: 800;
+  color: #666;
+}
+
+.stats-value {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.workspace-desc {
+  color: var(--text-dim);
+  font-size: 14px;
+  margin-bottom: 40px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.define-new-gap {
+  border: 2px dashed var(--border-color);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 400px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.define-new-gap:hover {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: #444;
+}
+
+.plus-icon {
+  font-size: 32px;
+  color: #444;
+}
+
+.add-text {
+  font-size: 12px;
+  font-weight: 800;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+.add-card-btn {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-color);
+  color: #000;
+  font-weight: 800;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.add-card-btn:hover {
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 15px 40px var(--primary-glow);
+}

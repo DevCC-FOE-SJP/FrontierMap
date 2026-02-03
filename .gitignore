@@ -1,0 +1,38 @@
+# Node.js
+node_modules/
+frontend/node_modules/
+dist/
+
+build/
+.eslintcache
+.vscode/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual Environments
+venv/
+backend/venv/
+
+# Environment Files
+.env
+.env.local
+backend/.env
+frontend/.env
+
+# Local Dev
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS
+.DS_Store
+Thumbs.db

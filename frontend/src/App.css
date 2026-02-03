@@ -1,0 +1,32 @@
+.app-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.content-area {
+  flex: 1;
+  min-width: 0;
+  background-color: var(--bg-color);
+  overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left var(--transition-speed) ease;
+}
+
+.sidebar-open .content-area {
+  margin-left: var(--sidebar-width);
+}
+
+.sidebar-closed .content-area {
+  margin-left: 0;
+}
+
+@media (max-width: 768px) {
+  .sidebar-open .content-area {
+    margin-left: 0;
+  }
+}
+

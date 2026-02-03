@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+pydantic-settings
+langchain
+langchain-openai
+langchain-groq
+pinecone-client
+pymongo
+arxiv
+praw
+python-dotenv
+pytest
+httpx
