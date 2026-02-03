@@ -42,8 +42,9 @@ function App() {
         ) : activePage === 'graph' ? (
           <FrontierGraph gaps={discoveredGaps} query={searchQuery} />
         ) : activePage === 'metrics' ? (
-          <ResearchMetrics />
+          <ResearchMetrics gaps={discoveredGaps} />
         ) : (
+
           <div className="placeholder">
             <h1>{activePage.toUpperCase()} - Coming Soon</h1>
           </div>

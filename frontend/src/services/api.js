@@ -25,5 +25,19 @@ export const discoveryService = {
       console.error('Error in getRawSources:', error);
       throw error;
     }
+  },
+
+  getMetrics: async (domain = 'machine learning') => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/discovery/metrics?domain=${encodeURIComponent(domain)}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch metrics');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error in getMetrics:', error);
+      throw error;
+    }
   }
 };
+

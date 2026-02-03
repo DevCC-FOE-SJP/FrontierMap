@@ -45,3 +45,39 @@ async def get_raw_sources(domain: str, limit: int = 5):
         "arxiv": papers,
         "reddit": discussions
     }
+
+@router.get("/metrics")
+async def get_research_metrics(domain: str = "machine learning"):
+    """
+    Fetch real-time research metrics for a given domain.
+    """
+    try:
+        # Fetch recent papers
+        papers = arxiv_service.search_papers(domain, max_results=20)
+        
+        # Calculate metrics
+        total_papers = len(papers)
+        
+        # Get unique categories
+        all_categories = []
+        for paper in papers:
+            all_categories.extend(paper.get("categories", []))
+        unique_categories = list(set(all_categories))[:5]
+        
+        # Get top authors (by frequency)
+        author_counts = {}
+        for paper in papers:
+            for author in paper.get("authors", []):
+                author_counts[author] = author_counts.get(author, 0) + 1
+        top_authors = sorted(author_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+        
+        return {
+            "domain": domain,
+            "total_papers_indexed": total_papers,
+            "top_categories": unique_categories,
+            "top_authors": [{"name": a[0], "paper_count": a[1]} for a in top_authors],
+            "recent_papers": papers[:5]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
