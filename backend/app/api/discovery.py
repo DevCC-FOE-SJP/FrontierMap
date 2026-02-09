@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 from collections import Counter
 from datetime import datetime
+import re
 
 from app.services.arxiv_service import arxiv_service
 from app.services.reddit_service import reddit_service
@@ -49,37 +50,86 @@ async def get_innovation_gaps(domain: str, limit: int = 5):
     Incorporates user feedback for personalized recommendations.
     """
     try:
-        # 1. Fetch from arXiv
-        papers = arxiv_service.search_papers(domain, max_results=limit)
+        # 1. Fetch from arXiv — get more papers than requested for richer LLM context
+        fetch_count = max(limit * 3, 15)
+        papers = arxiv_service.search_papers(domain, max_results=fetch_count)
 
-        # 2. Fetch from Reddit
+        # 2. Fetch from Reddit (if configured)
         discussions = reddit_service.search_discussions(domain, limit=limit)
 
-        # Combine sources
-        all_sources = papers + discussions
+        # 3. Fetch from HackerNews and StackExchange (no auth needed)
+        hn_stories = await hackernews_service.search_stories(domain, limit=10)
+        se_questions = await stackexchange_service.search_questions(domain, limit=10)
+
+        # Combine all sources — arXiv papers first (highest quality), then others
+        all_sources = papers + discussions + hn_stories + se_questions
 
         if not all_sources:
             return []
 
-        # 3. Get user feedback for this domain (if any)
+        # 3.5 Filter out sources that are clearly irrelevant to the domain
+        all_sources = _filter_relevant_sources(domain, all_sources)
+
+        if not all_sources:
+            return []
+
+        # 4. Get user feedback for this domain (if any)
         feedback = await db.get_feedback_stats(domain)
 
-        # 4. Analyze and extract gaps with feedback context
-        gaps = await analysis_service.extract_gaps(all_sources, feedback=feedback)
+        # 5. Analyze and extract gaps with feedback context
+        gaps = await analysis_service.extract_gaps(all_sources, domain=domain, feedback=feedback)
 
-        # 5. Upsert documents to vector store (non-blocking best effort)
+        # 6. Upsert documents to vector store (non-blocking best effort)
         try:
-            await vector_service.upsert_documents(all_sources)
+            await vector_service.upsert_documents(papers)
         except Exception:
             pass  # Don't fail the request if vector upsert fails
 
-        # 6. Save search history
+        # 7. Save search history
         await db.save_search(domain, len(gaps))
 
         return gaps
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+def _filter_relevant_sources(domain: str, sources: List[dict]) -> List[dict]:
+    """
+    Pre-filter sources to remove items clearly irrelevant to the user's domain.
+    Uses keyword overlap between the domain query and each source's title/content.
+    """
+    # Tokenize the domain query into meaningful keywords (3+ chars)
+    domain_lower = domain.lower()
+    domain_keywords = set(
+        w for w in re.split(r'\W+', domain_lower) if len(w) >= 3
+    )
+
+    if not domain_keywords:
+        return sources
+
+    filtered = []
+    for source in sources:
+        title = (source.get("title") or "").lower()
+        summary = (source.get("summary") or source.get("text") or source.get("body_snippet") or "").lower()
+        combined = title + " " + summary
+
+        # Check if any domain keyword appears in the source title or content
+        match_count = sum(1 for kw in domain_keywords if kw in combined)
+
+        # Also check if the full domain phrase appears
+        full_phrase_match = domain_lower in combined
+
+        # Keep the source if at least one keyword matches OR the full phrase matches
+        if match_count > 0 or full_phrase_match:
+            filtered.append(source)
+
+    # If filtering removed everything, fall back to original list
+    # (better to return some results than none)
+    if not filtered:
+        return sources
+
+    return filtered
 
 
 @router.get("/sources")

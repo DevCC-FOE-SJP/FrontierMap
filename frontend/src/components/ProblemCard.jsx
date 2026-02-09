@@ -3,7 +3,7 @@ import { discoveryService } from '../services/api';
 import './ProblemCard.css';
 
 const ProblemCard = ({ card, searchQuery = 'Uncategorized', onDelete = null, showDeleteInHeader = false }) => {
-  const { gap, context, source_citation, proposed_solution, novelty_score } = card;
+  const { gap, context, source_citation, source_url, proposed_solution, novelty_score } = card;
   const [isBookmarked, setIsBookmarked] = useState(false);
 
   // Check if card is already bookmarked on mount
@@ -38,6 +38,7 @@ const ProblemCard = ({ card, searchQuery = 'Uncategorized', onDelete = null, sho
         gap,
         context,
         source_citation,
+        source_url: source_url || '',
         proposed_solution,
         novelty_score,
         bookmarkedAt: new Date().toISOString()
@@ -104,7 +105,11 @@ const ProblemCard = ({ card, searchQuery = 'Uncategorized', onDelete = null, sho
       <div className="card-footer">
         <div className="source-info">
           <span className="source-icon">📄</span>
-          <span className="source-text">{source_citation}</span>
+          {source_url ? (
+            <a href={source_url} target="_blank" rel="noopener noreferrer" className="source-text source-link">{source_citation}</a>
+          ) : (
+            <span className="source-text">{source_citation}</span>
+          )}
         </div>
         <div className="novelty-gauge">
           <svg className="gauge-svg" viewBox="0 0 36 36">

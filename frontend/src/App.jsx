@@ -1,3 +1,4 @@
+import { AnimatePresence } from 'framer-motion';
 import React, { useState, useEffect, useCallback } from 'react'
 import Sidebar from './components/Sidebar'
 import SearchExplorer from './pages/SearchExplorer'
@@ -38,34 +39,37 @@ function App() {
 
   return (
     <div className={`app-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-      <Sidebar 
-        isOpen={isSidebarOpen} 
-        setIsOpen={setIsSidebarOpen} 
+      <Sidebar
+        isOpen={isSidebarOpen}
+        setIsOpen={setIsSidebarOpen}
         activePage={activePage}
         setActivePage={setActivePage}
       />
       <main className="content-area">
-        {activePage === 'search' ? (
-          <SearchExplorer 
-            isSidebarOpen={isSidebarOpen} 
-            onScanResults={handleScanResults}
-            isLoading={isLoading}
-            setIsLoading={setIsLoading}
-          />
-        ) : activePage === 'cards' ? (
-          <ProblemCardWorkspace gaps={discoveredGaps} searchQuery={searchQuery} onAddCard={handleAddCard} />
-        ) : activePage === 'saved' ? (
-          <SavedClusters />
-        ) : activePage === 'graph' ? (
-          <FrontierGraph gaps={discoveredGaps} query={searchQuery} />
-        ) : activePage === 'metrics' ? (
-          <ResearchMetrics gaps={discoveredGaps} searchQuery={searchQuery} />
-        ) : (
+        <AnimatePresence mode="wait">
+          {activePage === 'search' ? (
+            <SearchExplorer
+              key="search"
+              isSidebarOpen={isSidebarOpen}
+              onScanResults={handleScanResults}
+              isLoading={isLoading}
+              setIsLoading={setIsLoading}
+            />
+          ) : activePage === 'cards' ? (
+            <ProblemCardWorkspace key="cards" gaps={discoveredGaps} searchQuery={searchQuery} onAddCard={handleAddCard} />
+          ) : activePage === 'saved' ? (
+            <SavedClusters key="saved" />
+          ) : activePage === 'graph' ? (
+            <FrontierGraph key="graph" gaps={discoveredGaps} query={searchQuery} />
+          ) : activePage === 'metrics' ? (
+            <ResearchMetrics key="metrics" gaps={discoveredGaps} searchQuery={searchQuery} />
+          ) : (
 
-          <div className="placeholder">
-            <h1>{activePage.toUpperCase()} - Coming Soon</h1>
-          </div>
-        )}
+            <div key="placeholder" className="placeholder">
+              <h1>{activePage.toUpperCase()} - Coming Soon</h1>
+            </div>
+          )}
+        </AnimatePresence>
       </main>
     </div>
   )

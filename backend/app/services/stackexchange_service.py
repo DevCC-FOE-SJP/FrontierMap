@@ -7,7 +7,10 @@ class StackExchangeService:
 
     BASE_URL = "https://api.stackexchange.com/2.3"
 
-    async def search_questions(self, query: str, site: str = "stackoverflow", limit: int = 15) -> List[Dict]:
+    async def search_questions(self, query: str, site: str = "", limit: int = 15) -> List[Dict]:
+        if not site:
+            site = self._pick_site(query)
+
         """Search for relevant questions on Stack Exchange."""
         try:
             url = f"{self.BASE_URL}/search/advanced"
@@ -46,6 +49,25 @@ class StackExchangeService:
         except Exception as e:
             print(f"StackExchange search error: {e}")
             return []
+
+    def _pick_site(self, query: str) -> str:
+        """Choose the most appropriate StackExchange site for the query."""
+        q = query.lower()
+        # Map common domain keywords to their best StackExchange site
+        site_map = [
+            (["biology", "gene", "protein", "cell", "genome", "dna", "rna", "evolution", "species", "organism"], "biology"),
+            (["heart", "cardiac", "disease", "clinical", "patient", "medical", "drug", "therapy", "cancer", "diabetes", "health", "surgery", "diagnosis", "symptom", "treatment"], "health"),
+            (["physics", "quantum", "particle", "relativity", "gravity", "energy", "thermodynamic", "optics", "photon"], "physics"),
+            (["math", "algebra", "calculus", "theorem", "geometry", "topology", "probability", "statistics"], "math"),
+            (["chemistry", "molecule", "compound", "reaction", "organic", "inorganic", "polymer"], "chemistry"),
+            (["earth", "geology", "climate", "weather", "ocean", "seismol", "atmosphere"], "earthscience"),
+            (["space", "astronomy", "planet", "star", "galaxy", "telescope", "orbit", "cosmos"], "astronomy"),
+            (["electric", "circuit", "signal", "embedded", "arduino", "fpga", "semiconductor", "vlsi"], "electronics"),
+        ]
+        for keywords, site in site_map:
+            if any(kw in q for kw in keywords):
+                return site
+        return "stackoverflow"
 
     async def get_sentiment_signals(self, query: str) -> Dict:
         """Get aggregated engagement metrics."""

@@ -13,7 +13,7 @@ class ArxivService:
         search = arxiv.Search(
             query=query,
             max_results=max_results,
-            sort_by=arxiv.SortCriterion.SubmittedDate,
+            sort_by=arxiv.SortCriterion.Relevance,
             sort_order=arxiv.SortOrder.Descending
         )
 

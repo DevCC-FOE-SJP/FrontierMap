@@ -1,7 +1,23 @@
+import { motion } from 'framer-motion';
 import React, { useState, useMemo } from 'react';
 import ProblemCard from '../components/ProblemCard';
 import AddProblemModal from '../components/AddProblemModal';
 import './ProblemCardWorkspace.css';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 }
+};
 
 const ProblemCardWorkspace = ({ gaps = [], searchQuery = '', onAddCard }) => {
   const [filterText, setFilterText] = useState('');
@@ -23,7 +39,13 @@ const ProblemCardWorkspace = ({ gaps = [], searchQuery = '', onAddCard }) => {
   };
 
   return (
-    <div className="problem-card-workspace">
+    <motion.div
+      className="problem-card-workspace"
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      transition={{ duration: 0.4 }}
+    >
       <div className="workspace-header">
         <div className="header-left">
           <div className="accent-line"></div>
@@ -64,16 +86,23 @@ const ProblemCardWorkspace = ({ gaps = [], searchQuery = '', onAddCard }) => {
           </button>
         </div>
       ) : (
-        <div className="cards-grid">
+        <motion.div
+          className="cards-grid"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+        >
           {displayCards.map((card, index) => (
-            <ProblemCard key={index} card={card} searchQuery={searchQuery} />
+            <motion.div key={index} variants={itemVariants}>
+              <ProblemCard card={card} searchQuery={searchQuery} />
+            </motion.div>
           ))}
-          
-          <div className="define-new-gap" onClick={() => setIsModalOpen(true)}>
+
+          <motion.div variants={itemVariants} className="define-new-gap" onClick={() => setIsModalOpen(true)}>
             <div className="plus-icon">+</div>
             <span className="add-text">DEFINE NEW GAP</span>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
 
       {filterText && displayCards.length === 0 && gaps.length > 0 && (
@@ -81,7 +110,7 @@ const ProblemCardWorkspace = ({ gaps = [], searchQuery = '', onAddCard }) => {
           <p>No cards match "{filterText}". Try a different filter.</p>
         </div>
       )}
-      
+
       <button className="add-card-btn" onClick={() => setIsModalOpen(true)}>
         <span className="plus">+</span> Add Problem Card
       </button>
@@ -92,7 +121,7 @@ const ProblemCardWorkspace = ({ gaps = [], searchQuery = '', onAddCard }) => {
         onSave={handleSaveCard}
         searchQuery={searchQuery}
       />
-    </div>
+    </motion.div>
   );
 };
 
