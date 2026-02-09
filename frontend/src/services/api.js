@@ -145,5 +145,84 @@ export const discoveryService = {
       throw error;
     }
   },
+
+  // Backlog Management APIs
+  updateCard: async (cardId, updateData) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/discovery/cards/${cardId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update card');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error in updateCard:', error);
+      throw error;
+    }
+  },
+
+  getCardById: async (cardId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/discovery/cards/${cardId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch card');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error in getCardById:', error);
+      throw error;
+    }
+  },
+
+  deleteCard: async (cardId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/discovery/cards/${cardId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete card');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error in deleteCard:', error);
+      throw error;
+    }
+  },
+
+  getBacklogStats: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/discovery/backlog/stats`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch backlog stats');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error in getBacklogStats:', error);
+      throw error;
+    }
+  },
+
+  getFilteredBacklog: async (filters = {}) => {
+    try {
+      const params = new URLSearchParams();
+      if (filters.status) params.append('status', filters.status);
+      if (filters.priority) params.append('priority', filters.priority);
+      if (filters.domain) params.append('domain', filters.domain);
+      if (filters.tags && filters.tags.length > 0) params.append('tags', filters.tags.join(','));
+
+      const url = `${API_BASE_URL}/discovery/backlog/filter${params.toString() ? '?' + params.toString() : ''}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Failed to fetch filtered backlog');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error in getFilteredBacklog:', error);
+      throw error;
+    }
+  },
 };
 

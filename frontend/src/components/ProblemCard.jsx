@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { discoveryService } from '../services/api';
 import './ProblemCard.css';
 
-const ProblemCard = ({ card, searchQuery = 'Uncategorized', onDelete = null, showDeleteInHeader = false }) => {
-  const { gap, context, source_citation, source_url, proposed_solution, novelty_score } = card;
+const ProblemCard = ({ card, searchQuery = 'Uncategorized', onDelete = null, showDeleteInHeader = false, onUpdate = null }) => {
+  const { gap, context, source_citation, source_url, proposed_solution, novelty_score, _id, status = 'TODO', priority = 'MEDIUM', tags = [] } = card;
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [showControls, setShowControls] = useState(false);
+  const [localStatus, setLocalStatus] = useState(status);
+  const [localPriority, setLocalPriority] = useState(priority);
 
   // Check if card is already bookmarked on mount
   useEffect(() => {
@@ -64,10 +67,82 @@ const ProblemCard = ({ card, searchQuery = 'Uncategorized', onDelete = null, sho
     if (onDelete) onDelete(e);
   };
 
+  const handleStatusChange = async (newStatus) => {
+    if (!_id) return;
+    try {
+      await discoveryService.updateCard(_id, { status: newStatus });
+      setLocalStatus(newStatus);
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      console.error('Failed to update status:', error);
+    }
+  };
+
+  const handlePriorityChange = async (newPriority) => {
+    if (!_id) return;
+    try {
+      await discoveryService.updateCard(_id, { priority: newPriority });
+      setLocalPriority(newPriority);
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      console.error('Failed to update priority:', error);
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'TODO': return '#6c757d';
+      case 'IN_PROGRESS': return '#0d6efd';
+      case 'DONE': return '#198754';
+      case 'BLOCKED': return '#dc3545';
+      default: return '#6c757d';
+    }
+  };
+
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'LOW': return '#6c757d';
+      case 'MEDIUM': return '#ffc107';
+      case 'HIGH': return '#fd7e14';
+      case 'CRITICAL': return '#dc3545';
+      default: return '#6c757d';
+    }
+  };
+
   return (
     <div className="problem-card">
       <div className="card-header">
-        <span className="knowledge-gap-badge">KNOWLEDGE GAP</span>
+        <div className="header-left-section">
+          <span className="knowledge-gap-badge">KNOWLEDGE GAP</span>
+          {_id && (
+            <div className="card-metadata">
+              <select 
+                className="status-select" 
+                value={localStatus}
+                onChange={(e) => handleStatusChange(e.target.value)}
+                style={{ backgroundColor: getStatusColor(localStatus) }}
+                title="Change status"
+              >
+                <option value="TODO">To Do</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="DONE">Done</option>
+                <option value="BLOCKED">Blocked</option>
+              </select>
+              <select 
+                className="priority-select" 
+                value={localPriority}
+                onChange={(e) => handlePriorityChange(e.target.value)}
+                style={{ backgroundColor: getPriorityColor(localPriority) }}
+                title="Change priority"
+              >
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+                <option value="CRITICAL">Critical</option>
+              </select>
+            </div>
+          )}
+        </div>
         <div className="header-actions">
           {!showDeleteInHeader && (
             <button 

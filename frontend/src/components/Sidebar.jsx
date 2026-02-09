@@ -7,6 +7,7 @@ const Sidebar = ({ isOpen, setIsOpen, activePage, setActivePage }) => {
     { id: 'graph', label: 'Frontier Graph', icon: '🕸️' },
     { id: 'cards', label: 'Problem Cards', icon: '🗂️' },
     { id: 'saved', label: 'Saved Clusters', icon: '📁' },
+    { id: 'backlog', label: 'Issue Backlog', icon: '📋' },
     { id: 'metrics', label: 'Research Metrics', icon: '📊' },
   ];
 

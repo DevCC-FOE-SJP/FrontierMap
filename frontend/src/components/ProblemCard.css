@@ -23,6 +23,36 @@
   align-items: center;
 }
 
+.header-left-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.card-metadata {
+  display: flex;
+  gap: 8px;
+}
+
+.status-select,
+.priority-select {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.status-select:hover,
+.priority-select:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
 .knowledge-gap-badge {
   background: rgba(255, 140, 0, 0.1);
   color: var(--primary-color);

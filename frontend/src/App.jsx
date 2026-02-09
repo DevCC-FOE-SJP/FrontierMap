@@ -6,6 +6,7 @@ import ProblemCardWorkspace from './pages/ProblemCardWorkspace'
 import FrontierGraph from './pages/FrontierGraph'
 import ResearchMetrics from './pages/ResearchMetrics'
 import SavedClusters from './pages/SavedClusters'
+import BacklogBoard from './pages/BacklogBoard'
 import './App.css'
 import './index.css'
 
@@ -63,6 +64,8 @@ function App() {
             <FrontierGraph key="graph" gaps={discoveredGaps} query={searchQuery} />
           ) : activePage === 'metrics' ? (
             <ResearchMetrics key="metrics" gaps={discoveredGaps} searchQuery={searchQuery} />
+          ) : activePage === 'backlog' ? (
+            <BacklogBoard key="backlog" />
           ) : (
 
             <div key="placeholder" className="placeholder">
