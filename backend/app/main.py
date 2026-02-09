@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.discovery import router as discovery_router
+from .api.discovery import router as discovery_router
 
 app = FastAPI(title="FrontierMap API", version="0.1.0")
 
