@@ -4,10 +4,12 @@ pydantic-settings
 langchain
 langchain-openai
 langchain-groq
-pinecone-client
+pinecone
 pymongo
+motor
 arxiv
 praw
 python-dotenv
 pytest
 httpx
+aiohttp

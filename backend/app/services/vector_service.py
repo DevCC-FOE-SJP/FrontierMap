@@ -71,4 +71,29 @@ class VectorService:
         results = self.index.query(vector=query_vector, top_k=top_k, include_metadata=True)
         return results.matches
 
+    async def compute_novelty_score(self, idea_text: str) -> float:
+        """
+        Compute novelty score by comparing against existing documents in Pinecone.
+        Returns 1-10 (10 = most novel, 1 = very similar to existing work).
+        """
+        if not self.pc:
+            return 5.0  # Default score when vector search is unavailable
+
+        try:
+            from langchain_openai import OpenAIEmbeddings
+            embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+            query_vector = await embeddings.aembed_query(idea_text)
+
+            results = self.index.query(vector=query_vector, top_k=5, include_metadata=True)
+            if not results.matches:
+                return 9.0  # No similar documents found = very novel
+
+            max_similarity = max(m.score for m in results.matches)
+            # Convert cosine similarity (0-1) to novelty (1-10)
+            novelty = 10 * (1 - max_similarity)
+            return max(1.0, min(10.0, round(novelty, 1)))
+        except Exception as e:
+            print(f"Novelty score computation error: {e}")
+            return 5.0
+
 vector_service = VectorService()

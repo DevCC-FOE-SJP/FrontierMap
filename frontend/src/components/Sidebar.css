@@ -176,3 +176,29 @@
   font-size: 11px;
   color: var(--text-dim);
 }
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100vw;
+  }
+
+  .nav-item {
+    padding: 16px 16px;
+    min-height: 48px;
+    font-size: 15px;
+  }
+
+  .nav-icon {
+    font-size: 20px;
+  }
+
+  .hamburger-menu {
+    width: 44px;
+    height: 44px;
+  }
+
+  .logo-container {
+    margin-bottom: 32px;
+  }
+}

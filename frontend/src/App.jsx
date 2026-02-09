@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Sidebar from './components/Sidebar'
 import SearchExplorer from './pages/SearchExplorer'
 import ProblemCardWorkspace from './pages/ProblemCardWorkspace'
@@ -11,15 +11,29 @@ import './index.css'
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [activePage, setActivePage] = useState('search')
-  const [discoveredGaps, setDiscoveredGaps] = useState([])
-  const [searchQuery, setSearchQuery] = useState('')
+  const [discoveredGaps, setDiscoveredGaps] = useState(() => {
+    try { return JSON.parse(sessionStorage.getItem('discoveredGaps') || '[]'); } catch { return []; }
+  })
+  const [searchQuery, setSearchQuery] = useState(() => sessionStorage.getItem('searchQuery') || '')
   const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    sessionStorage.setItem('discoveredGaps', JSON.stringify(discoveredGaps));
+  }, [discoveredGaps]);
+
+  useEffect(() => {
+    sessionStorage.setItem('searchQuery', searchQuery);
+  }, [searchQuery]);
 
   const handleScanResults = (results, query) => {
     setDiscoveredGaps(results);
     setSearchQuery(query);
-    setActivePage('cards'); // Automatically switch to the workspace
+    setActivePage('cards');
   };
+
+  const handleAddCard = useCallback((newCard) => {
+    setDiscoveredGaps(prev => [...prev, newCard]);
+  }, []);
 
 
   return (
@@ -39,13 +53,13 @@ function App() {
             setIsLoading={setIsLoading}
           />
         ) : activePage === 'cards' ? (
-          <ProblemCardWorkspace gaps={discoveredGaps} searchQuery={searchQuery} />
+          <ProblemCardWorkspace gaps={discoveredGaps} searchQuery={searchQuery} onAddCard={handleAddCard} />
         ) : activePage === 'saved' ? (
           <SavedClusters />
         ) : activePage === 'graph' ? (
           <FrontierGraph gaps={discoveredGaps} query={searchQuery} />
         ) : activePage === 'metrics' ? (
-          <ResearchMetrics gaps={discoveredGaps} />
+          <ResearchMetrics gaps={discoveredGaps} searchQuery={searchQuery} />
         ) : (
 
           <div className="placeholder">

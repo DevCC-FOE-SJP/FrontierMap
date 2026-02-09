@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { discoveryService } from '../services/api';
 import './ProblemCard.css';
 
 const ProblemCard = ({ card, searchQuery = 'Uncategorized', onDelete = null, showDeleteInHeader = false }) => {
@@ -29,6 +30,8 @@ const ProblemCard = ({ card, searchQuery = 'Uncategorized', onDelete = null, sho
       }
       localStorage.setItem('SavedClusters', JSON.stringify(savedClusters));
       setIsBookmarked(false);
+      // Post feedback: dismissed (un-bookmarked)
+      discoveryService.postFeedback(gap, searchQuery, 'dismissed');
     } else {
       // Add to bookmarked cards under this search query
       const cardToBookmark = {
@@ -46,10 +49,18 @@ const ProblemCard = ({ card, searchQuery = 'Uncategorized', onDelete = null, sho
       savedClusters[searchQuery].push(cardToBookmark);
       localStorage.setItem('SavedClusters', JSON.stringify(savedClusters));
       setIsBookmarked(true);
+      // Post feedback: bookmarked
+      discoveryService.postFeedback(gap, searchQuery, 'bookmarked');
     }
     
     // Dispatch custom event to notify other components
     window.dispatchEvent(new Event('bookmarkChanged'));
+  };
+
+  const handleDelete = (e) => {
+    // Post dismiss feedback
+    discoveryService.postFeedback(gap, searchQuery, 'dismissed');
+    if (onDelete) onDelete(e);
   };
 
   return (
@@ -69,7 +80,7 @@ const ProblemCard = ({ card, searchQuery = 'Uncategorized', onDelete = null, sho
           {showDeleteInHeader && onDelete && (
             <button 
               className="delete-btn-header"
-              onClick={onDelete}
+              onClick={handleDelete}
               title="Delete card"
             >
               🗑️

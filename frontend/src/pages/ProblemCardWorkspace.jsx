@@ -1,10 +1,26 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import ProblemCard from '../components/ProblemCard';
+import AddProblemModal from '../components/AddProblemModal';
 import './ProblemCardWorkspace.css';
 
-const ProblemCardWorkspace = ({ gaps = [], searchQuery = '' }) => {
-  // Use real data if provided
-  const displayCards = gaps.length > 0 ? gaps : [];
+const ProblemCardWorkspace = ({ gaps = [], searchQuery = '', onAddCard }) => {
+  const [filterText, setFilterText] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const displayCards = useMemo(() => {
+    if (!gaps.length) return [];
+    if (!filterText.trim()) return gaps;
+    const lower = filterText.toLowerCase();
+    return gaps.filter(card =>
+      (card.gap && card.gap.toLowerCase().includes(lower)) ||
+      (card.context && card.context.toLowerCase().includes(lower)) ||
+      (card.proposed_solution && card.proposed_solution.toLowerCase().includes(lower))
+    );
+  }, [gaps, filterText]);
+
+  const handleSaveCard = (newCard) => {
+    if (onAddCard) onAddCard(newCard);
+  };
 
   return (
     <div className="problem-card-workspace">
@@ -18,11 +34,17 @@ const ProblemCardWorkspace = ({ gaps = [], searchQuery = '' }) => {
         <div className="header-right">
           <div className="search-filter">
             <span className="search-icon">🔍</span>
-            <input type="text" placeholder="Filter active problems..." className="filter-input" />
+            <input
+              type="text"
+              placeholder="Filter active problems..."
+              className="filter-input"
+              value={filterText}
+              onChange={e => setFilterText(e.target.value)}
+            />
           </div>
           <div className="active-stats">
             <span className="stats-label">ACTIVE PROBLEMS</span>
-            <span className="stats-value">12,402</span>
+            <span className="stats-value">{gaps.length}</span>
           </div>
         </div>
       </div>
@@ -32,20 +54,44 @@ const ProblemCardWorkspace = ({ gaps = [], searchQuery = '' }) => {
         Curated high-density knowledge gaps requiring urgent cross-disciplinary synthesis.
       </p>
 
-      <div className="cards-grid">
-        {displayCards.map((card, index) => (
-          <ProblemCard key={index} card={card} searchQuery={searchQuery} />
-        ))}
-        
-        <div className="define-new-gap">
-          <div className="plus-icon">+</div>
-          <span className="add-text">DEFINE NEW GAP</span>
+      {displayCards.length === 0 && gaps.length === 0 ? (
+        <div className="workspace-empty-state">
+          <div className="empty-icon-large">🗂️</div>
+          <h2>No Problem Cards Yet</h2>
+          <p>Run a scan in the Search Explorer to discover research gaps, or create one manually.</p>
+          <button className="empty-action-btn" onClick={() => setIsModalOpen(true)}>
+            + Create Manually
+          </button>
         </div>
-      </div>
+      ) : (
+        <div className="cards-grid">
+          {displayCards.map((card, index) => (
+            <ProblemCard key={index} card={card} searchQuery={searchQuery} />
+          ))}
+          
+          <div className="define-new-gap" onClick={() => setIsModalOpen(true)}>
+            <div className="plus-icon">+</div>
+            <span className="add-text">DEFINE NEW GAP</span>
+          </div>
+        </div>
+      )}
+
+      {filterText && displayCards.length === 0 && gaps.length > 0 && (
+        <div className="no-filter-results">
+          <p>No cards match "{filterText}". Try a different filter.</p>
+        </div>
+      )}
       
-      <button className="add-card-btn">
+      <button className="add-card-btn" onClick={() => setIsModalOpen(true)}>
         <span className="plus">+</span> Add Problem Card
       </button>
+
+      <AddProblemModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveCard}
+        searchQuery={searchQuery}
+      />
     </div>
   );
 };

@@ -408,3 +408,110 @@
     background: #222;
     color: var(--primary-color);
 }
+
+.sentiment-breakdown {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.breakdown-item {
+  text-align: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.breakdown-item .bd-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.breakdown-item .bd-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .research-metrics-page {
+    padding: 30px 16px;
+    gap: 20px;
+  }
+
+  .metrics-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .search-domain {
+    width: 100%;
+  }
+
+  .domain-input {
+    flex: 1;
+    width: auto;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-card {
+    padding: 20px;
+  }
+
+  .metric-card.wide {
+    grid-column: span 1;
+  }
+
+  .summary-stats {
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 24px 16px;
+  }
+
+  .stat-number {
+    font-size: 28px;
+  }
+
+  .sentiment-breakdown {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .sentiment-gauge {
+    max-width: 180px;
+  }
+
+  .sentiment-value .number {
+    font-size: 28px;
+  }
+
+  .chart-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .time-toggle {
+    align-self: flex-start;
+  }
+
+  .metrics-footer {
+    padding: 20px 16px;
+  }
+
+  .export-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .author-item {
+    padding: 10px 12px;
+  }
+}

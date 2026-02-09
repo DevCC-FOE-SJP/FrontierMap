@@ -177,3 +177,37 @@
   font-weight: 700;
   color: #666;
 }
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .problem-card {
+    padding: 18px;
+    gap: 16px;
+  }
+
+  .problem-card:hover {
+    transform: none;
+  }
+
+  .card-title {
+    font-size: 17px;
+  }
+
+  .section-content {
+    font-size: 12px;
+  }
+
+  .novelty-gauge {
+    width: 42px;
+    height: 42px;
+  }
+
+  .bookmark-btn,
+  .delete-btn-header {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
