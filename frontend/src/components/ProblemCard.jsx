@@ -3,9 +3,8 @@ import { discoveryService } from '../services/api';
 import './ProblemCard.css';
 
 const ProblemCard = ({ card, searchQuery = 'Uncategorized', onDelete = null, showDeleteInHeader = false, onUpdate = null }) => {
-  const { gap, context, source_citation, source_url, proposed_solution, novelty_score, _id, status = 'TODO', priority = 'MEDIUM', tags = [] } = card;
+  const { gap, context, source_citation, source_url, proposed_solution, novelty_score, _id, status = 'TODO', priority = 'MEDIUM' } = card;
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [showControls, setShowControls] = useState(false);
   const [localStatus, setLocalStatus] = useState(status);
   const [localPriority, setLocalPriority] = useState(priority);
 

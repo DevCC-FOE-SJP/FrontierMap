@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import ProblemCard from '../components/ProblemCard';
 import { discoveryService } from '../services/api';
@@ -12,7 +12,7 @@ const BacklogBoard = () => {
   const [filterPriority, setFilterPriority] = useState('');
   const [filterDomain, setFilterDomain] = useState('');
 
-  const loadCards = async () => {
+  const loadCards = useCallback(async () => {
     try {
       setLoading(true);
       const filters = {};
@@ -27,7 +27,7 @@ const BacklogBoard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterStatus, filterPriority, filterDomain]);
 
   const loadStats = async () => {
     try {
@@ -41,7 +41,7 @@ const BacklogBoard = () => {
   useEffect(() => {
     loadCards();
     loadStats();
-  }, [filterStatus, filterPriority, filterDomain]);
+  }, [loadCards]);
 
   const handleCardUpdate = () => {
     // Reload cards after update
