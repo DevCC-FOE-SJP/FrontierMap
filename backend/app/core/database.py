@@ -119,4 +119,102 @@ class Database:
             doc["_id"] = str(doc["_id"])
         return doc
 
+    # ---- Backlog Management ----
+    @classmethod
+    async def update_card(cls, card_id: str, update_data: dict):
+        """Update a problem card with new metadata."""
+        if cls.db is None:
+            return None
+        from bson import ObjectId
+        update_data["updated_at"] = datetime.utcnow().isoformat()
+        result = await cls.db["problem_cards"].update_one(
+            {"_id": ObjectId(card_id)},
+            {"$set": update_data}
+        )
+        return result.modified_count > 0
+
+    @classmethod
+    async def get_card_by_id(cls, card_id: str):
+        """Get a single card by ID."""
+        if cls.db is None:
+            return None
+        from bson import ObjectId
+        doc = await cls.db["problem_cards"].find_one({"_id": ObjectId(card_id)})
+        if doc:
+            doc["_id"] = str(doc["_id"])
+        return doc
+
+    @classmethod
+    async def delete_card(cls, card_id: str):
+        """Delete a problem card."""
+        if cls.db is None:
+            return None
+        from bson import ObjectId
+        result = await cls.db["problem_cards"].delete_one({"_id": ObjectId(card_id)})
+        return result.deleted_count > 0
+
+    @classmethod
+    async def get_backlog_stats(cls):
+        """Get statistics about all cards in the backlog."""
+        if cls.db is None:
+            return {
+                "total_cards": 0,
+                "by_status": {},
+                "by_priority": {},
+                "by_domain": {}
+            }
+        
+        # Get all cards
+        cursor = cls.db["problem_cards"].find()
+        cards = []
+        async for doc in cursor:
+            cards.append(doc)
+        
+        stats = {
+            "total_cards": len(cards),
+            "by_status": {},
+            "by_priority": {},
+            "by_domain": {}
+        }
+        
+        for card in cards:
+            # Count by status
+            status = card.get("status", "TODO")
+            stats["by_status"][status] = stats["by_status"].get(status, 0) + 1
+            
+            # Count by priority
+            priority = card.get("priority", "MEDIUM")
+            stats["by_priority"][priority] = stats["by_priority"].get(priority, 0) + 1
+            
+            # Count by domain
+            domain = card.get("domain", "unknown")
+            stats["by_domain"][domain] = stats["by_domain"].get(domain, 0) + 1
+        
+        return stats
+
+    @classmethod
+    async def get_filtered_cards(cls, status: str = None, priority: str = None, 
+                                  domain: str = None, tags: list = None):
+        """Get cards filtered by various criteria."""
+        if cls.db is None:
+            return []
+        
+        # Build filter query
+        filter_query = {}
+        if status:
+            filter_query["status"] = status
+        if priority:
+            filter_query["priority"] = priority
+        if domain:
+            filter_query["domain"] = domain
+        if tags:
+            filter_query["tags"] = {"$in": tags}
+        
+        cursor = cls.db["problem_cards"].find(filter_query).sort("created_at", -1)
+        cards = []
+        async for doc in cursor:
+            doc["_id"] = str(doc["_id"])
+            cards.append(doc)
+        return cards
+
 db = Database()

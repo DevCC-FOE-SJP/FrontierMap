@@ -12,6 +12,12 @@ class UserProblemCard(BaseModel):
     domain: str = ""
     is_manual: bool = False
     created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    # Issue tracking fields
+    status: str = "TODO"  # TODO, IN_PROGRESS, DONE, BLOCKED
+    priority: str = "MEDIUM"  # LOW, MEDIUM, HIGH, CRITICAL
+    tags: List[str] = []
+    assignee: str = ""
+    updated_at: Optional[str] = None
 
 
 class SearchHistory(BaseModel):
@@ -33,3 +39,17 @@ class SentimentSnapshot(BaseModel):
     label: str  # DEAD END, LOW INTEREST, GROWING, HOT TOPIC, BREAKTHROUGH
     sources: dict = {}
     timestamp: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class UpdateCardRequest(BaseModel):
+    status: Optional[str] = None
+    priority: Optional[str] = None
+    tags: Optional[List[str]] = None
+    assignee: Optional[str] = None
+
+
+class BacklogStats(BaseModel):
+    total_cards: int = 0
+    by_status: dict = {}
+    by_priority: dict = {}
+    by_domain: dict = {}

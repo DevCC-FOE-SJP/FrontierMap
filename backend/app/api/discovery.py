@@ -13,6 +13,7 @@ from app.services.hackernews_service import hackernews_service
 from app.services.stackexchange_service import stackexchange_service
 from app.services.sentiment_service import sentiment_service
 from app.core.database import db
+from app.core.models import UpdateCardRequest, BacklogStats
 
 router = APIRouter(prefix="/discovery", tags=["discovery"])
 
@@ -33,6 +34,10 @@ class SaveCardRequest(BaseModel):
     novelty_score: float
     domain: str = ""
     is_manual: bool = False
+    status: str = "TODO"
+    priority: str = "MEDIUM"
+    tags: List[str] = []
+    assignee: str = ""
 
 
 class GenerateCardRequest(BaseModel):
@@ -336,6 +341,106 @@ async def get_export_data(domain: str = "machine learning"):
             "sentiment": pulse,
             "saved_cards": saved_cards,
         }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ---- Backlog Management ----
+
+@router.put("/cards/{card_id}")
+async def update_problem_card(card_id: str, update: UpdateCardRequest):
+    """Update metadata for a specific problem card (status, priority, tags, assignee)."""
+    try:
+        update_data = {}
+        if update.status is not None:
+            if update.status not in ["TODO", "IN_PROGRESS", "DONE", "BLOCKED"]:
+                raise HTTPException(status_code=400, detail="Invalid status value")
+            update_data["status"] = update.status
+        if update.priority is not None:
+            if update.priority not in ["LOW", "MEDIUM", "HIGH", "CRITICAL"]:
+                raise HTTPException(status_code=400, detail="Invalid priority value")
+            update_data["priority"] = update.priority
+        if update.tags is not None:
+            update_data["tags"] = update.tags
+        if update.assignee is not None:
+            update_data["assignee"] = update.assignee
+        
+        if not update_data:
+            raise HTTPException(status_code=400, detail="No fields to update")
+        
+        success = await db.update_card(card_id, update_data)
+        if success:
+            updated_card = await db.get_card_by_id(card_id)
+            return {"status": "updated", "card": updated_card}
+        else:
+            raise HTTPException(status_code=404, detail="Card not found or not updated")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/cards/{card_id}")
+async def get_problem_card(card_id: str):
+    """Get a specific problem card by ID."""
+    try:
+        card = await db.get_card_by_id(card_id)
+        if card:
+            return card
+        raise HTTPException(status_code=404, detail="Card not found")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/cards/{card_id}")
+async def delete_problem_card(card_id: str):
+    """Delete a problem card from the backlog."""
+    try:
+        success = await db.delete_card(card_id)
+        if success:
+            return {"status": "deleted", "id": card_id}
+        raise HTTPException(status_code=404, detail="Card not found")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/backlog/stats", response_model=BacklogStats)
+async def get_backlog_statistics():
+    """Get statistics about the backlog (total cards, breakdown by status/priority/domain)."""
+    try:
+        stats = await db.get_backlog_stats()
+        return stats
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/backlog/filter")
+async def get_filtered_backlog(
+    status: Optional[str] = None,
+    priority: Optional[str] = None,
+    domain: Optional[str] = None,
+    tags: Optional[str] = None
+):
+    """
+    Get filtered backlog cards based on status, priority, domain, or tags.
+    Tags should be comma-separated (e.g., "ai,ml,nlp").
+    """
+    try:
+        tags_list = None
+        if tags:
+            tags_list = [tag.strip() for tag in tags.split(",")]
+        
+        cards = await db.get_filtered_cards(
+            status=status,
+            priority=priority,
+            domain=domain,
+            tags=tags_list
+        )
+        return {"cards": cards, "count": len(cards)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
