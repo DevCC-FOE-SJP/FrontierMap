@@ -4,6 +4,14 @@ import ProblemCard from '../components/ProblemCard';
 import { discoveryService } from '../services/api';
 import './BacklogBoard.css';
 
+// Status display names mapping
+const STATUS_DISPLAY_NAMES = {
+  'TODO': 'To Do',
+  'IN_PROGRESS': 'In Progress',
+  'DONE': 'Done',
+  'BLOCKED': 'Blocked'
+};
+
 const BacklogBoard = () => {
   const [cards, setCards] = useState([]);
   const [stats, setStats] = useState(null);
@@ -150,7 +158,7 @@ const BacklogBoard = () => {
           {Object.entries(cardsByStatus).map(([status, statusCards]) => (
             <div key={status} className="kanban-column">
               <div className="column-header">
-                <h3 className="column-title">{status.replace('_', ' ')}</h3>
+                <h3 className="column-title">{STATUS_DISPLAY_NAMES[status] || status}</h3>
                 <span className="column-count">{statusCards.length}</span>
               </div>
               <div className="column-cards">

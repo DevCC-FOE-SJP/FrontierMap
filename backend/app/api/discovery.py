@@ -14,6 +14,7 @@ from app.services.stackexchange_service import stackexchange_service
 from app.services.sentiment_service import sentiment_service
 from app.core.database import db
 from app.core.models import UpdateCardRequest, BacklogStats
+from app.core.constants import DEFAULT_STATUS, DEFAULT_PRIORITY, VALID_STATUSES, VALID_PRIORITIES
 
 router = APIRouter(prefix="/discovery", tags=["discovery"])
 
@@ -34,8 +35,8 @@ class SaveCardRequest(BaseModel):
     novelty_score: float
     domain: str = ""
     is_manual: bool = False
-    status: str = "TODO"
-    priority: str = "MEDIUM"
+    status: str = DEFAULT_STATUS
+    priority: str = DEFAULT_PRIORITY
     tags: List[str] = []
     assignee: str = ""
 
@@ -353,12 +354,12 @@ async def update_problem_card(card_id: str, update: UpdateCardRequest):
     try:
         update_data = {}
         if update.status is not None:
-            if update.status not in ["TODO", "IN_PROGRESS", "DONE", "BLOCKED"]:
-                raise HTTPException(status_code=400, detail="Invalid status value")
+            if update.status not in VALID_STATUSES:
+                raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {', '.join(VALID_STATUSES)}")
             update_data["status"] = update.status
         if update.priority is not None:
-            if update.priority not in ["LOW", "MEDIUM", "HIGH", "CRITICAL"]:
-                raise HTTPException(status_code=400, detail="Invalid priority value")
+            if update.priority not in VALID_PRIORITIES:
+                raise HTTPException(status_code=400, detail=f"Invalid priority. Must be one of: {', '.join(VALID_PRIORITIES)}")
             update_data["priority"] = update.priority
         if update.tags is not None:
             update_data["tags"] = update.tags

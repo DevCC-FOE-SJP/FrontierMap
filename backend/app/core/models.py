@@ -2,6 +2,8 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 from datetime import datetime
 
+from app.core.constants import DEFAULT_STATUS, DEFAULT_PRIORITY
+
 
 class UserProblemCard(BaseModel):
     gap: str
@@ -13,8 +15,8 @@ class UserProblemCard(BaseModel):
     is_manual: bool = False
     created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
     # Issue tracking fields
-    status: str = "TODO"  # TODO, IN_PROGRESS, DONE, BLOCKED
-    priority: str = "MEDIUM"  # LOW, MEDIUM, HIGH, CRITICAL
+    status: str = DEFAULT_STATUS
+    priority: str = DEFAULT_PRIORITY
     tags: List[str] = []
     assignee: str = ""
     updated_at: Optional[str] = None
