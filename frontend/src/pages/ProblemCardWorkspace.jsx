@@ -2,7 +2,7 @@ import React from 'react';
 import ProblemCard from '../components/ProblemCard';
 import './ProblemCardWorkspace.css';
 
-const ProblemCardWorkspace = ({ gaps = [] }) => {
+const ProblemCardWorkspace = ({ gaps = [], searchQuery = '' }) => {
   // Use real data if provided
   const displayCards = gaps.length > 0 ? gaps : [];
 
@@ -11,7 +11,9 @@ const ProblemCardWorkspace = ({ gaps = [] }) => {
       <div className="workspace-header">
         <div className="header-left">
           <div className="accent-line"></div>
-          <h1 className="workspace-title">Problem Card Workspace</h1>
+          <div className="title-container">
+            <h1 className="workspace-title">Problem Card Workspace</h1>
+          </div>
         </div>
         <div className="header-right">
           <div className="search-filter">
@@ -25,13 +27,14 @@ const ProblemCardWorkspace = ({ gaps = [] }) => {
         </div>
       </div>
 
+      {searchQuery && <p className="search-context">{searchQuery}</p>}
       <p className="workspace-desc">
         Curated high-density knowledge gaps requiring urgent cross-disciplinary synthesis.
       </p>
 
       <div className="cards-grid">
         {displayCards.map((card, index) => (
-          <ProblemCard key={index} card={card} />
+          <ProblemCard key={index} card={card} searchQuery={searchQuery} />
         ))}
         
         <div className="define-new-gap">

@@ -4,6 +4,7 @@ import SearchExplorer from './pages/SearchExplorer'
 import ProblemCardWorkspace from './pages/ProblemCardWorkspace'
 import FrontierGraph from './pages/FrontierGraph'
 import ResearchMetrics from './pages/ResearchMetrics'
+import SavedClusters from './pages/SavedClusters'
 import './App.css'
 import './index.css'
 
@@ -38,7 +39,9 @@ function App() {
             setIsLoading={setIsLoading}
           />
         ) : activePage === 'cards' ? (
-          <ProblemCardWorkspace gaps={discoveredGaps} />
+          <ProblemCardWorkspace gaps={discoveredGaps} searchQuery={searchQuery} />
+        ) : activePage === 'saved' ? (
+          <SavedClusters />
         ) : activePage === 'graph' ? (
           <FrontierGraph gaps={discoveredGaps} query={searchQuery} />
         ) : activePage === 'metrics' ? (

@@ -33,14 +33,47 @@
   letter-spacing: 1px;
 }
 
-.bookmark-btn {
-  color: #555;
-  font-size: 16px;
-  transition: color 0.2s;
+.header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
-.bookmark-btn:hover {
+.bookmark-btn,
+.delete-btn-header {
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  transition: all 0.2s;
+  border-radius: 4px;
+}
+
+.bookmark-btn.bookmarked {
+  color: var(--primary-color);
+  filter: drop-shadow(0 0 4px rgba(255, 140, 0, 0.5));
+}
+
+.delete-btn-header {
+  color: #ff4444;
+}
+
+.bookmark-btn:hover,
+.delete-btn-header:hover {
   color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
+  transform: scale(1.1);
+}
+
+.bookmark-btn.bookmarked:hover {
+  color: #ff4444;
+}
+
+.delete-btn-header:hover {
+  background: rgba(255, 68, 68, 0.1);
+  color: #ff6666;
 }
 
 .card-title {

@@ -1,14 +1,81 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './ProblemCard.css';
 
-const ProblemCard = ({ card }) => {
+const ProblemCard = ({ card, searchQuery = 'Uncategorized', onDelete = null, showDeleteInHeader = false }) => {
   const { gap, context, source_citation, proposed_solution, novelty_score } = card;
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  // Check if card is already bookmarked on mount
+  useEffect(() => {
+    const savedClusters = JSON.parse(localStorage.getItem('SavedClusters') || '{}');
+    const clusterCards = savedClusters[searchQuery] || [];
+    const isAlreadyBookmarked = clusterCards.some(bookmarkedCard => bookmarkedCard.gap === gap);
+    setIsBookmarked(isAlreadyBookmarked);
+  }, [gap, searchQuery]);
+
+  const handleBookmark = () => {
+    const savedClusters = JSON.parse(localStorage.getItem('SavedClusters') || '{}');
+    
+    if (isBookmarked) {
+      // Remove from bookmarked cards in this cluster
+      if (savedClusters[searchQuery]) {
+        savedClusters[searchQuery] = savedClusters[searchQuery].filter(
+          bookmarkedCard => bookmarkedCard.gap !== gap
+        );
+        // Remove cluster if empty
+        if (savedClusters[searchQuery].length === 0) {
+          delete savedClusters[searchQuery];
+        }
+      }
+      localStorage.setItem('SavedClusters', JSON.stringify(savedClusters));
+      setIsBookmarked(false);
+    } else {
+      // Add to bookmarked cards under this search query
+      const cardToBookmark = {
+        gap,
+        context,
+        source_citation,
+        proposed_solution,
+        novelty_score,
+        bookmarkedAt: new Date().toISOString()
+      };
+      
+      if (!savedClusters[searchQuery]) {
+        savedClusters[searchQuery] = [];
+      }
+      savedClusters[searchQuery].push(cardToBookmark);
+      localStorage.setItem('SavedClusters', JSON.stringify(savedClusters));
+      setIsBookmarked(true);
+    }
+    
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new Event('bookmarkChanged'));
+  };
 
   return (
     <div className="problem-card">
       <div className="card-header">
         <span className="knowledge-gap-badge">KNOWLEDGE GAP</span>
-        <button className="bookmark-btn">🔖</button>
+        <div className="header-actions">
+          {!showDeleteInHeader && (
+            <button 
+              className={`bookmark-btn ${isBookmarked ? 'bookmarked' : ''}`} 
+              onClick={handleBookmark}
+              title={isBookmarked ? "Remove bookmark" : "Bookmark"}
+            >
+              {isBookmarked ? '🔖' : '🔖'}
+            </button>
+          )}
+          {showDeleteInHeader && onDelete && (
+            <button 
+              className="delete-btn-header"
+              onClick={onDelete}
+              title="Delete card"
+            >
+              🗑️
+            </button>
+          )}
+        </div>
       </div>
       
       <h3 className="card-title">{gap}</h3>
