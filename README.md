@@ -121,5 +121,13 @@ FrontierMap/
 │   └── requirements.txt    # Python dependencies
 ```
 
+## Team members - DevCC
+
+- Sithum Sandaruwan
+- Lochana Bandara
+- Vimarshana Herath
+- Nuwan Weerasuriya
+- Himeth Udana
+
 ## ⚖️ License
 MIT
