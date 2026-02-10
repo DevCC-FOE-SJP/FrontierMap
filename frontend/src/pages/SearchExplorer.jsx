@@ -86,7 +86,7 @@ const SearchExplorer = ({ onScanResults, isLoading, setIsLoading }) => {
           <span className="metric-value nominal">ENGINE NOMINAL • 4MS LATENCY</span>
         </div>
         <div className="metric-item">
-          <span className="metric-value">© 2024 FRONTIERMAP CORE • ADVANCED SCIENTIFIC ENGINE</span>
+          <span className="metric-value">© {new Date().getFullYear()} FRONTIERMAP CORE • ADVANCED SCIENTIFIC ENGINE</span>
         </div>
         <div className="metric-item right">
           <span className="metric-label">RECENT DISCOVERY</span>

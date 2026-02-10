@@ -102,8 +102,9 @@
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+  padding-bottom: 80px;
 }
 
 .define-new-gap {
@@ -114,7 +115,7 @@
   align-items: center;
   justify-content: center;
   gap: 16px;
-  min-height: 400px;
+  min-height: 220px;
   transition: all 0.3s ease;
   cursor: pointer;
 }
@@ -138,13 +139,12 @@
 
 .add-card-btn {
   position: fixed;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 32px;
+  right: 40px;
   background: var(--primary-color);
   color: #000;
   font-weight: 800;
-  padding: 14px 28px;
+  padding: 14px 24px;
   border-radius: 12px;
   font-size: 13px;
   display: flex;
@@ -156,7 +156,7 @@
 }
 
 .add-card-btn:hover {
-  transform: translateX(-50%) translateY(-2px);
+  transform: translateY(-2px);
   box-shadow: 0 15px 40px var(--primary-glow);
 }
 
@@ -249,6 +249,7 @@
 
   .add-card-btn {
     bottom: 24px;
+    right: 20px;
     padding: 12px 20px;
     font-size: 12px;
   }

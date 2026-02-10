@@ -185,8 +185,8 @@
 .cluster-cards-grid {
   padding: 0 32px 32px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
 }
 
 @media (max-width: 768px) {

@@ -5,6 +5,7 @@ import './ProblemCard.css';
 const ProblemCard = ({ card, searchQuery = 'Uncategorized', onDelete = null, showDeleteInHeader = false }) => {
   const { gap, context, source_citation, source_url, proposed_solution, novelty_score } = card;
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // Check if card is already bookmarked on mount
   useEffect(() => {
@@ -94,13 +95,19 @@ const ProblemCard = ({ card, searchQuery = 'Uncategorized', onDelete = null, sho
       
       <div className="card-section">
         <span className="section-label">THE LIMITATION</span>
-        <p className="section-content text-truncate">{context}</p>
+        <p className={`section-content ${!isExpanded ? 'text-clamp' : ''}`}>{context}</p>
       </div>
 
       <div className="card-section">
         <span className="section-label">PROPOSED DIRECTION</span>
-        <p className="section-content">{proposed_solution}</p>
+        <p className={`section-content ${!isExpanded ? 'text-clamp' : ''}`}>{proposed_solution}</p>
       </div>
+
+      {(context?.length > 180 || proposed_solution?.length > 180) && (
+        <button className="expand-toggle" onClick={() => setIsExpanded(!isExpanded)}>
+          {isExpanded ? 'Show less ▲' : 'Show more ▼'}
+        </button>
+      )}
 
       <div className="card-footer">
         <div className="source-info">

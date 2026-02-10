@@ -1,7 +1,7 @@
 import React from 'react';
 import './Sidebar.css';
 
-const Sidebar = ({ isOpen, setIsOpen, activePage, setActivePage }) => {
+const Sidebar = ({ isOpen, setIsOpen, activePage, setActivePage, onExportPDF, exporting }) => {
   const menuItems = [
     { id: 'search', label: 'Search Explorer', icon: '🔍' },
     { id: 'graph', label: 'Frontier Graph', icon: '🕸️' },
@@ -45,6 +45,16 @@ const Sidebar = ({ isOpen, setIsOpen, activePage, setActivePage }) => {
         </nav>
 
         <div className="sidebar-footer">
+          {onExportPDF && (
+            <button 
+              className="sidebar-export-btn"
+              onClick={onExportPDF}
+              disabled={exporting}
+            >
+              <span className="nav-icon">📄</span>
+              <span className="nav-label">{exporting ? 'Exporting...' : 'Export PDF Report'}</span>
+            </button>
+          )}
           <div className="user-badge">
             <div className="avatar"></div>
             <div className="user-info">

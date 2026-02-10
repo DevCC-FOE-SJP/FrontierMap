@@ -237,6 +237,9 @@ const ResearchMetrics = ({ gaps = [], searchQuery = '' }) => {
           </p>
         </div>
         <div className="header-right">
+          <button className="export-btn header-export" onClick={handleExportPDF} disabled={exporting}>
+            {exporting ? '⏳ Generating...' : '📄 Export PDF'}
+          </button>
           <div className="time-toggle">
             <button
               className={`toggle-btn ${timeRange === '6months' ? 'active' : ''}`}
@@ -423,7 +426,7 @@ const ResearchMetrics = ({ gaps = [], searchQuery = '' }) => {
       
       <div className="metrics-footer">
         <button className="export-btn" onClick={handleExportPDF} disabled={exporting}>
-          {exporting ? '⏳ Generating PDF...' : '📊 Export Report'}
+          {exporting ? '⏳ Generating PDF...' : '📊 Export Full Report'}
         </button>
       </div>
     </div>

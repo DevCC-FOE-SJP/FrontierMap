@@ -203,7 +203,7 @@ const FrontierGraph = ({ gaps = [], query = '' }) => {
 
         {selectedNode && (
           <div className="node-info-card">
-            <button className="close-info" onClick={() => setSelectedNode(null)}>×</button>
+            <button className="close-info-btn" onClick={() => setSelectedNode(null)}>×</button>
             <span className="card-label">{selectedNode.type === 'core' ? 'CENTRAL DOMAIN' : 'ACTIVE FRONTIER'}</span>
             <h2 className="card-node-title">{selectedNode.name}</h2>
             <div className="card-stats">
@@ -213,7 +213,9 @@ const FrontierGraph = ({ gaps = [], query = '' }) => {
                   <div className="stat">📄 {selectedNode.data?.source_citation}</div>
                   {selectedNode.data?.proposed_solution && (
                     <div className="stat proposed-solution">
-                      💡 {selectedNode.data.proposed_solution.substring(0, 120)}...
+                      💡 {selectedNode.data.proposed_solution.length > 150 
+                        ? selectedNode.data.proposed_solution.substring(0, 150) + '...' 
+                        : selectedNode.data.proposed_solution}
                     </div>
                   )}
                 </>
