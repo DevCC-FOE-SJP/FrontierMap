@@ -2,6 +2,8 @@
 
 FrontierMap is a research discovery engine that maps the "knowledge frontier" by identifying unsolved problems, knowledge gaps, and future work directions from academic papers (Arxiv) and technical discussions.
 
+### try it now! - https://frontier-map.netlify.app/
+
 ## 🚀 Features
 
 - **Frontier Scanning**: Search any domain and extract actionable "Problem Cards" containing specific research gaps and proposed directions.
