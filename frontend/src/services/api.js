@@ -1,9 +1,11 @@
-const API_BASE_URL = 'http://localhost:8001';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://frontiermap.onrender.com';
 
 export const discoveryService = {
   getGaps: async (domain, limit = 5) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/discovery/gaps?domain=${encodeURIComponent(domain)}&limit=${limit}`);
+      const response = await fetch(
+        `${API_BASE_URL}/discovery/gaps?domain=${encodeURIComponent(domain)}&limit=${limit}`
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch innovation gaps');
       }
@@ -16,7 +18,9 @@ export const discoveryService = {
 
   getRawSources: async (domain, limit = 5) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/discovery/sources?domain=${encodeURIComponent(domain)}&limit=${limit}`);
+      const response = await fetch(
+        `${API_BASE_URL}/discovery/sources?domain=${encodeURIComponent(domain)}&limit=${limit}`
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch raw sources');
       }
@@ -29,7 +33,9 @@ export const discoveryService = {
 
   getMetrics: async (domain = 'machine learning') => {
     try {
-      const response = await fetch(`${API_BASE_URL}/discovery/metrics?domain=${encodeURIComponent(domain)}`);
+      const response = await fetch(
+        `${API_BASE_URL}/discovery/metrics?domain=${encodeURIComponent(domain)}`
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch metrics');
       }
@@ -42,7 +48,9 @@ export const discoveryService = {
 
   getPulse: async (domain = 'machine learning') => {
     try {
-      const response = await fetch(`${API_BASE_URL}/discovery/pulse?domain=${encodeURIComponent(domain)}`);
+      const response = await fetch(
+        `${API_BASE_URL}/discovery/pulse?domain=${encodeURIComponent(domain)}`
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch pulse data');
       }
@@ -58,7 +66,11 @@ export const discoveryService = {
       const response = await fetch(`${API_BASE_URL}/discovery/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ card_gap: cardGap, domain: domain, action: action }),
+        body: JSON.stringify({
+          card_gap: cardGap,
+          domain: domain,
+          action: action,
+        }),
       });
       if (!response.ok) {
         throw new Error('Failed to post feedback');
@@ -122,7 +134,9 @@ export const discoveryService = {
 
   getExportData: async (domain = 'machine learning') => {
     try {
-      const response = await fetch(`${API_BASE_URL}/discovery/export?domain=${encodeURIComponent(domain)}`);
+      const response = await fetch(
+        `${API_BASE_URL}/discovery/export?domain=${encodeURIComponent(domain)}`
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch export data');
       }
@@ -135,7 +149,9 @@ export const discoveryService = {
 
   getSearchHistory: async (limit = 20) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/discovery/history?limit=${limit}`);
+      const response = await fetch(
+        `${API_BASE_URL}/discovery/history?limit=${limit}`
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch search history');
       }
@@ -146,4 +162,3 @@ export const discoveryService = {
     }
   },
 };
-
