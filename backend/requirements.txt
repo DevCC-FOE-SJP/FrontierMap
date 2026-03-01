@@ -11,6 +11,7 @@ arxiv
 praw
 python-dotenv
 pytest
+pytest-asyncio
 httpx
 aiohttp
 gunicorn
